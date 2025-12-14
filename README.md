@@ -14,14 +14,14 @@
 <br />
 <div align="center">
   <a href="https://github.com/cmgcds/fastvpinns">
-    <img alt="FastVPINNs logo" src="https://raw.githubusercontent.com/cmgcds/fastvpinns/main/Fastvpinns_logo.png" width="500">
+    <img alt="FastVPINNs logo" src="https://raw.githubusercontent.com/airexlab/fastvpinns/main/Fastvpinns_logo.png" width="500">
   </a>
 
 <h3 align="center">Tensor-driven accelerated framework for hp-variational pinns</h3>
 
   <p align="center">
     <br />
-    <a href="https://cmgcds.github.io/fastvpinns"><strong>Link to Documentation 📚</strong></a>
+    <a href="https://airexlab.github.io/fastvpinns"><strong>Link to Documentation 📚</strong></a>
     <br />
 
   </p>
