@@ -448,31 +448,22 @@ class Geometry_2D(Geometry):
 
     def write_vtk(self, solution, output_path, filename, data_names):
         """
-        Writes the data to a VTK file.
+        Writes the solution data to a VTK file.
 
-        :param solution: The solution vector.
+        :param solution: The solution array, shape (n_points, n_fields).
         :type solution: numpy.ndarray
         :param output_path: The path to the output folder.
         :type output_path: str
         :param filename: The name of the output file.
         :type filename: str
-        :param data_names: The list of data names in the VTK file to be written as scalars.
+        :param data_names: The list of data names to write as scalars.
         :type data_names: list
         :return: None
         """
-        # read the existing vtk into file
         if self.mesh_generation_method == "internal":
             vtk_file_name = Path(self.output_folder) / "internal.vtk"
         elif self.mesh_generation_method == "external":
             vtk_file_name = Path(self.output_folder) / "external.vtk"
-
-        data = []
-        with open(vtk_file_name, "r", encoding="utf-8") as File:
-            for line in File:
-                data.append(line)
-
-        # get the output file name
-        output_file_name = Path(output_path) / filename
 
         if solution.shape[1] != len(data_names):
             print("[Error] : File : geometry_2d.py, Function: write_vtk")
@@ -484,21 +475,13 @@ class Geometry_2D(Geometry):
             )
             raise ValueError("Number of data names and solution columns are not equal")
 
-        # write the data to the output file
-        with open(str(output_file_name), "w", encoding="utf-8") as FN:
-            for line in data:
-                FN.write(line)
-                if "POINT_DATA" in line.strip():
-                    break
+        mesh = meshio.read(str(vtk_file_name))
 
-            for i in range(solution.shape[1]):
-                FN.write("SCALARS " + data_names[i] + " float\n")
-                FN.write("LOOKUP_TABLE default\n")
-                np.savetxt(FN, solution[:, i])
-                FN.write("\n")
+        for i, name in enumerate(data_names):
+            mesh.point_data[name] = solution[:, i].astype(np.float64)
 
-        # save the vtk file as image
-        # self.save_vtk_as_image(str(output_file_name), data_names)
+        output_file_name = Path(output_path) / filename
+        meshio.vtk.write(str(output_file_name), mesh, binary=False, fmt_version="4.2")
 
     def plot_adaptive_mesh(
         self, cells_list, area_averaged_cell_loss_list, epoch, filename="cell_residual"
